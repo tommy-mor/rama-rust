@@ -1,3 +1,4 @@
+pub mod builder;
 use log::{debug, error, info, warn}; // Import log macros
 use serde::de::DeserializeOwned;
 use serde::Serialize;
@@ -29,6 +30,7 @@ pub enum ClientError {
     MaxRedirectsExceeded,
 }
 
+#[derive(Debug)]
 pub struct Client {
     // Keep the original base URL (e.g., Conductor)
     base_url: Url,
@@ -178,7 +180,7 @@ impl Client {
         Url::parse(&full_path).map_err(ClientError::Url)
     }
 
-    // Selects a URL to target, preferring cached supervisors (Refactored Style)
+    // Selects a URL to target, preferring cached supervisors
     async fn get_request_url(&self, base_request_url: &Url, module: &str) -> Result<Url, ClientError> {
         // --- Attempt to use cache ---
         let supervisor_list_opt = { // Lock scope
